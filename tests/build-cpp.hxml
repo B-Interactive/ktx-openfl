@@ -1,0 +1,9 @@
+# KTX for OpenFL — unit tests, C++ target
+-lib lime
+-lib openfl
+-lib utest
+
+-cp src
+-cp tests
+-main TestMain
+-cpp bin/cpp

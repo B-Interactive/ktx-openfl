@@ -1,0 +1,14 @@
+# KTX for OpenFL — unit tests with the Starling bridge, HashLink target
+#
+# Starling references legacy flash.* types; OpenFL's project tooling remaps
+# them automatically (see openfl's include.xml), so a bare hxml build does the
+# same here.
+-lib lime
+-lib openfl
+-lib utest
+-lib starling
+--remap flash:openfl
+-cp src
+-cp tests
+-main TestMain
+-hl bin/test-starling.hl
