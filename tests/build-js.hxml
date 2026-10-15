@@ -1,0 +1,10 @@
+# KTX for OpenFL — unit tests, JavaScript target
+-lib lime
+-lib openfl
+-lib utest
+-lib hxnodejs
+-D nodejs
+-cp src
+-cp tests
+-main TestMain
+-js bin/test.js

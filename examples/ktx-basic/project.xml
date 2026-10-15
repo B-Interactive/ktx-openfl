@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+	<meta title="KTX for OpenFL Sample" package="org.ktx.openfl.sample" version="1.0.0" />
+
+	<app main="Main" file="KtxSample" path="Export" />
+
+	<source path="src" />
+
+	<haxelib name="openfl" />
+	<haxelib name="ktx-openfl" />
+
+	<assets path="assets" />
+
+</project>

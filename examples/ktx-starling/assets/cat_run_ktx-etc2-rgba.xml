@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="cat_run_ktx-etc2-rgba.ktx" width="1024" height="2048">
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_01" x="1" y="349" width="465" height="386" frameX="-20" frameY="-63" frameWidth="512" frameHeight="512"/>
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_02" x="1" y="1" width="479" height="346" frameX="-5" frameY="-103" frameWidth="512" frameHeight="512"/>
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_03" x="1" y="737" width="448" height="352" frameX="-54" frameY="-97" frameWidth="512" frameHeight="512"/>
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_04" x="468" y="707" width="452" height="336" frameX="-45" frameY="-113" frameWidth="512" frameHeight="512"/>
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_05" x="468" y="358" width="460" height="347" frameX="-43" frameY="-102" frameWidth="512" frameHeight="512"/>
+    <SubTexture name="cat_run_ktx-etc2-rgba.ktx_06" x="482" y="1" width="472" height="355" frameX="-35" frameY="-94" frameWidth="512" frameHeight="512"/>
+</TextureAtlas>

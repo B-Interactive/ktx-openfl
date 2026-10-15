@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+	<meta title="KTX for OpenFL Starling Sample" package="org.ktx.openfl.starling.sample" version="1.0.0" />
+
+	<app main="Main" file="KtxStarlingSample" path="bin" />
+
+	<window background="#888888" fps="60" />
+	<window width="1024" height="1024" unless="mobile" />
+	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
+	<window resizable="true" />
+
+	<source path="src" />
+
+	<haxelib name="openfl" />
+	<haxelib name="starling" />
+	<haxelib name="ktx-openfl" />
+
+	<!-- KTX atlases; copied beside the app so the asset manager can reload
+		them from a URL after a context loss. -->
+	<assets path="assets" embed="false" />
+
+</project>

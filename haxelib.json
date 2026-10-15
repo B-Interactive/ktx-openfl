@@ -1,0 +1,13 @@
+{
+	"name": "ktx-openfl",
+	"url": "https://github.com/B-Interactive/openfl-ktx",
+	"license": "MIT",
+	"tags": ["openfl", "lime", "starling", "texture", "ktx", "gpu", "cross"],
+	"description": "KTX for OpenFL: KTX (Khronos Texture) GPU texture container support for OpenFL, with an optional Starling bridge. KTXv1 is supported; KTXv2 is detected and cleanly rejected for now.",
+	"version": "0.5.0",
+	"releasenote": "Version-agnostic API: Ktx v1/v2 detection, with v2 being cleanly rejected for now.",
+	"classPath": "src/",
+	"dependencies": {
+		"openfl": ""
+	}
+}

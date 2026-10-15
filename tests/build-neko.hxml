@@ -1,0 +1,8 @@
+# KTX for OpenFL — unit tests, Neko target
+-lib lime
+-lib openfl
+-lib utest
+-cp src
+-cp tests
+-main TestMain
+-neko bin/test.n
