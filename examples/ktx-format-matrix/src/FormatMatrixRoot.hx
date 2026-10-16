@@ -2,7 +2,6 @@ package;
 
 import openfl.Assets;
 import ktx.openfl.Ktx;
-import ktx.openfl.KtxData;
 import ktx.openfl.starling.KtxTextures;
 import starling.core.Starling;
 import starling.display.MovieClip;
@@ -35,8 +34,8 @@ import starling.utils.Color;
 
 	* PNG uses the stock `Texture.fromBitmapData()`.
 	* KTX uses the `ktx-openfl` Starling bridge (`KtxTextures.fromKtxData()`)
-	  behind a `Ktx.isFormatSupported()` probe, so every compressed format,
-	  ASTC included, is checked against the live GPU before it is uploaded.
+	  behind a `Ktx.supports()` probe, so every compressed format, ASTC
+	  included, is checked against the live GPU before it is uploaded.
 
 	`layoutGrid()` runs on load and again from `Main` on every window
 	resize; it only moves things around and never recreates textures.
@@ -289,12 +288,12 @@ class FormatMatrixRoot extends Sprite
 				try
 				{
 					var bytes = Assets.getBytes(entry.tex);
-					var ktx = new KtxData(bytes);
+					var ktx = Ktx.readData(bytes);
 
 					// Probe the live GPU before uploading, so a compressed
 					// format such as ASTC is listed when this hardware cannot
 					// sample it.
-					if (!Ktx.isFormatSupported(Starling.current.context, ktx.glInternalFormat))
+					if (!Ktx.supports(Starling.current.context, ktx))
 					{
 						return { texture: null, reason: "unsupported on this GPU (" + ktx.formatName + ")" };
 					}

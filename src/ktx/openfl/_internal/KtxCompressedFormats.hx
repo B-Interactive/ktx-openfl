@@ -1,8 +1,7 @@
-package ktx.openfl;
+package ktx.openfl._internal;
 
 import openfl.display3D.Context3D;
 import openfl.errors.IllegalOperationError;
-import ktx.openfl._internal.KtxGL;
 
 #if !(flash || air)
 

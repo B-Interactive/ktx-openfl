@@ -65,12 +65,13 @@ class KtxTextureFactoryTest implements ITest
 		Assert.isFalse(factory.canHandle(new AssetReference("hero.ktx")));
 	}
 
-	public function testHandlesKtxExtension()
+	public function testHandlesKtxAndKtx2Extensions()
 	{
 		var factory = new KtxTextureFactory();
 		var extensions = factory.getExtensions();
 
 		Assert.isTrue(extensions.indexOf("ktx") != -1);
+		Assert.isTrue(extensions.indexOf("ktx2") != -1);
 	}
 
 	public function testRegisterWithAssetManager()

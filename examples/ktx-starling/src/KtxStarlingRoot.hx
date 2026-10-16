@@ -2,7 +2,6 @@ package;
 
 import openfl.Assets;
 import ktx.openfl.Ktx;
-import ktx.openfl.KtxData;
 import ktx.openfl.starling.KtxAssets;
 import starling.assets.AssetManager;
 import starling.core.Starling;
@@ -79,9 +78,9 @@ class KtxStarlingRoot extends Sprite
 			{
 				if (bytes != null && Ktx.isKtx1(bytes))
 				{
-					var ktx = new KtxData(bytes);
+					var ktx = Ktx.readData(bytes);
 
-					if (Ktx.isFormatSupported(Starling.current.context, ktx.glInternalFormat))
+					if (Ktx.supports(Starling.current.context, ktx))
 					{
 						loadWinner(candidate);
 						return;

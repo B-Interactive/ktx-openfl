@@ -1,6 +1,6 @@
 package ktx;
 
-import ktx.openfl.KtxCompressedFormats;
+import ktx.openfl._internal.KtxCompressedFormats;
 import ktx.openfl._internal.KtxGL;
 import utest.Assert;
 
@@ -14,7 +14,7 @@ import utest.Assert;
 	shared; the wiring tests document the branch-specific behaviour where
 	the two paths legitimately differ.
 **/
-@:access(ktx.openfl.KtxCompressedFormats)
+@:access(ktx.openfl._internal.KtxCompressedFormats)
 class KtxCompressedFormatsTest implements utest.ITest
 {
 	public function new() {}

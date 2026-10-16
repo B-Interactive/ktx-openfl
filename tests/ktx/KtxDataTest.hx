@@ -5,6 +5,7 @@ import openfl.errors.IllegalOperationError;
 import ktx.openfl.Ktx;
 import ktx.openfl.KtxData;
 import ktx.openfl.KtxGPUFormat;
+import ktx.openfl.KtxSupercompression;
 import openfl.utils.ByteArray;
 import utest.Assert;
 
@@ -31,6 +32,31 @@ class KtxDataTest implements utest.ITest
 		Assert.isTrue(ktx.gpuFormat == KtxGPUFormat.DXT);
 		Assert.equals(0x83F3, ktx.glInternalFormat);
 		Assert.equals("DXT5", ktx.formatName);
+	}
+
+	public function testVersionAgnosticFieldsForKtx1()
+	{
+		var data = KtxFixtures.build(0x83F3, 64, 64, 4);
+		var ktx = Ktx.readData(data);
+
+		// KTXv1 reports the fixed container answers: version 1, no recorded
+		// premultiplication, no supercompression, and GPU-ready data.
+		Assert.equals(1, ktx.version);
+		Assert.isNull(ktx.premultipliedAlpha);
+		Assert.isTrue(ktx.supercompression == KtxSupercompression.NONE);
+		Assert.isFalse(ktx.needsTranscode);
+		Assert.isTrue(ktx.isUploadReady);
+		Assert.isFalse(ktx.generateMipmaps);
+	}
+
+	public function testGenerateMipmapsFlag()
+	{
+		// levels == 0 asks the consumer to generate mips; only the base
+		// level is embedded, and upload never creates the missing ones.
+		var ktx = Ktx.readData(KtxFixtures.build(0x83F0, 64, 64, 0));
+
+		Assert.isTrue(ktx.generateMipmaps);
+		Assert.equals(1, ktx.numTextures);
 	}
 
 	public function testMetadataForEtc2RgbIsOpaque()
@@ -97,28 +123,19 @@ class KtxDataTest implements utest.ITest
 		}
 
 		var wrapped = ByteArray.fromBytes(bytes);
-		Assert.isTrue(KtxData.isKtxData(wrapped, 10));
-		Assert.isFalse(KtxData.isKtxData(wrapped));
+		Assert.isTrue(Ktx.isKtx(wrapped, 10));
+		Assert.isFalse(Ktx.isKtx(wrapped));
 
 		var info = new KtxData(wrapped, 10);
 		Assert.equals(64, info.width);
 		Assert.equals(10, info.byteArrayOffset);
 	}
 
-	public function testIsKtxDataDetection()
-	{
-		// isKtxData accepts any KTX magic, v1 or v2.
-		Assert.isTrue(KtxData.isKtxData(KtxFixtures.build(0x83F0, 64, 64, 1)));
-		Assert.isTrue(KtxData.isKtxData(KtxFixtures.buildAsKtx2()));
-		Assert.isFalse(KtxData.isKtxData(ByteArray.fromBytes(haxe.io.Bytes.ofString("ATF!......"))));
-		Assert.isFalse(KtxData.isKtxData(null));
-	}
-
 	public function testConstructRejectsKtx2()
 	{
 		// Detection is broader than loading: v2 is recognised but never parsed.
 		var data = KtxFixtures.buildAsKtx2();
-		Assert.isTrue(KtxData.isKtxData(data));
+		Assert.isTrue(Ktx.isKtx(data));
 
 		var message = null;
 
@@ -168,9 +185,11 @@ class KtxDataTest implements utest.ITest
 		var data = KtxFixtures.build(0x8C02, 64, 64, 2);
 		Assert.isTrue(Ktx.isKtx1(data));
 
-		var reader = Ktx.readData(data);
-		Assert.isTrue(reader.gpuFormat == KtxGPUFormat.PVRTC);
-		Assert.isTrue(reader.hasAlpha);
+		var ktx = Ktx.readData(data);
+		Assert.isTrue(ktx.gpuFormat == KtxGPUFormat.PVRTC);
+		Assert.isTrue(ktx.hasAlpha);
+		Assert.equals(2, ktx.numTextures);
+		Assert.equals(1, ktx.version);
 	}
 
 	public function testFacadeReadDataRejectsKtx2()

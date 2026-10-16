@@ -8,16 +8,20 @@ What it does
 ------------
 
 * Registers the KTX factory once with `KtxAssets.register()`, so the
-  `AssetManager` turns `.ktx` files into textures.
+  `AssetManager` turns `.ktx` (and `.ktx2`) files into textures. KTXv2 is
+  still rejected at load with a clear error; only KTXv1 uploads today.
 * Picks the first atlas format this GPU can sample, in this order:
   **DXT5 → ETC2 → PVRTC → DXT1 → ETC1**. Each candidate's header is read
-  with `KtxData` and checked with `Ktx.isFormatSupported()` before it is
-  loaded; only the winner is enqueued. (`ktx-openfl` also supports ASTC 2D
-  LDR and EAC R/RG when the GPU allows; this sample does not ship those assets.)
+  with `Ktx.readData` / `KtxData` and checked with `Ktx.supports()` before
+  it is loaded; only the winner is enqueued. (`ktx-openfl` also supports
+  ASTC 2D LDR and EAC R/RG when the GPU allows; this sample does not ship
+  those assets.)
 * Enqueues the winning `.ktx` and its atlas `.xml`. The `AssetManager` pairs
   them into a `TextureAtlas` (the XML's `imagePath` names the texture), and
   the frames become a 12 fps `MovieClip` centred on stage, labelled with the
   chosen format.
+* Texture options set premultiplied alpha to `false` (typical for compressed
+  KTX; the container does not record PMA on v1).
 * If no candidate is supported, a short message is shown instead.
 
 Context loss

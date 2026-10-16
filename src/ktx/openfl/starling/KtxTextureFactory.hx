@@ -37,7 +37,7 @@ class KtxTextureFactory extends AssetFactory
 	public function new()
 	{
 		super();
-		addExtensions(["ktx"]);
+		addExtensions(["ktx", "ktx2"]);
 	}
 
 	/**

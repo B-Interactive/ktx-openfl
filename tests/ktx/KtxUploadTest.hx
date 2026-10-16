@@ -2,8 +2,8 @@ package ktx;
 
 import openfl.display3D.textures.CubeTexture;
 import openfl.errors.IllegalOperationError;
+import ktx.openfl._internal.Ktx1Reader;
 import ktx.openfl.Ktx;
-import ktx.openfl.Ktx1Reader;
 import utest.Assert;
 import utest.ITest;
 
@@ -158,6 +158,12 @@ class KtxUploadTest implements ITest
 
 	public function testVersionString()
 	{
-		Assert.equals("0.4.0", Ktx.VERSION);
+		Assert.equals("0.5.0", Ktx.VERSION);
+	}
+
+	public function testSupportsWithoutDataReportsFalse()
+	{
+		// Without a live context, only the data-side guards can be checked.
+		Assert.isFalse(Ktx.supports(cast null, null));
 	}
 }

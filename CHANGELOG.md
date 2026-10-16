@@ -4,20 +4,36 @@ Changelog
 0.5.0 (14/10/2026)
 ----------
 
-Library rename and extra compression formats.
+Library rename, extra compression formats, and API work.
+
+**Formats and upload**
 
 - ASTC 2D LDR: all 14 block sizes, RGBA and sRGB, mapped to `KtxGPUFormat.ASTC` and Context3D `compressedAlpha`
 - EAC R11, SIGNED R11, RG11 and SIGNED RG11, mapped to `KtxGPUFormat.ETC2` and Context3D `compressed`
-- `Ktx.isAstcHdrSupported()` (also on `KtxCompressedFormats`) for asset selection. Upload and `isFormatSupported` stay LDR-only; the HDR query does not enable block formats on its own
+- `Ktx.isAstcHdrSupported()` for asset selection. Upload and format probes stay LDR-only; the HDR query does not enable block formats on its own
 - Upload is GPU-only via `compressedTexImage2D`. There is no CPU decode path
+
+**API updates**
+
+The app-facing surface is now fixed around `Ktx`, `KtxData`, `KtxGPUFormat`, `KtxSupercompression`, optional `TextureKtx` / `CubeTextureKtx`, and the optional Starling bridge (`KtxAssets`, `KtxTextures`).
+
+- Prefer `Ktx.readData(bytes)` (or `new KtxData(bytes)`) for metadata. The parser is no longer a public type
+- Prefer `Ktx.supports(context, ktxData)` as the canonical GPU capability check. `Ktx.isFormatSupported(context, glInternalFormat)` remains as an advanced raw GL probe
+- `KtxData` overloads: `createTextureFromData`, `uploadTextureFromData`, and the cube twins, reuse retained bytes without a second header parse
+- `KtxData` exposes version-agnostic fields used by the freeze: `version`, `premultipliedAlpha` (always `null` on v1), `supercompression` (`NONE` on v1), `needsTranscode`, `isUploadReady`, plus the existing size/format getters. `generateMipmaps` is the **file header flag only**; upload never generates mipmaps — only embedded levels are uploaded
+- `KtxData.reader` and any former public `isKtxData`-style helpers are not part of the contract
+- `Ktx1Reader`, `KtxCompressedFormats`, and `KtxFormat` live under `ktx.openfl._internal` and are not public API
+- Starling `KtxAssets.register` / `KtxTextureFactory` register both `.ktx` and `.ktx2`. KTXv2 is still rejected at load with a clear error; only KTXv1 uploads
+- Away3D bridge is not available; package name `ktx.openfl.away3d` is reserved for a future optional bridge (same pattern as Starling)
 
 Not supported yet:
 
 - BPTC / RGTC, PVRTC2, S3TC sRGB variants, ATC, FXT1, LATC and other legacy codecs
 - ASTC 3D, array and 1D textures
 - Uncompressed KTX
-- KTXv2, Basis, UASTC and CPU transcoder
+- KTXv2 parse and upload (identifier detection only; supercompressed / Basis planned later)
 - Flash / AIR native KTX upload
+- Away3D bridge
 
 0.4.0 (09/10/2026)
 ------------------

@@ -8,10 +8,7 @@ import openfl.display3D.Context3DRenderMode;
 import openfl.display3D.textures.Texture;
 import openfl.events.Event;
 import ktx.openfl.Ktx;
-import ktx.openfl.KtxData;
 import ktx.openfl.KtxGPUFormat;
-import ktx.openfl.Ktx1Reader;
-import ktx.openfl.KtxCompressedFormats;
 import ktx.openfl.TextureKtx;
 
 using ktx.openfl.TextureKtx;
@@ -62,12 +59,14 @@ class Main extends Sprite
 		}
 
 		// Inspect metadata through the AtfData-style wrapper.
-		var ktx = new KtxData(bytes);
-		trace('KTX: ${ktx.formatName} ${ktx.width}x${ktx.height}, ${ktx.numTextures} levels, format '
-			+ ktx.format + (ktx.hasAlpha ? " (alpha)" : ""));
+		var ktx = Ktx.readData(bytes);
+		trace('KTX v${ktx.version}: ${ktx.formatName} ${ktx.width}x${ktx.height}, ${ktx.numTextures} levels, '
+			+ 'format ' + ktx.format + (ktx.hasAlpha ? " (alpha)" : ""));
 
-		// Skip unsupported formats rather than throwing on upload.
-		if (!Ktx.isFormatSupported(context, ktx.glInternalFormat))
+		// Ask the library whether this GPU can upload this data before
+		// creating anything, so an unsupported format is skipped rather than
+		// thrown on upload.
+		if (!Ktx.supports(context, ktx))
 		{
 			trace("This GPU cannot upload " + ktx.formatName);
 			return;
@@ -76,31 +75,39 @@ class Main extends Sprite
 		// Cubemap files use the matching cube API instead.
 		if (ktx.isCubeMap)
 		{
-			var cube = Ktx.createCubeTexture(context, bytes);
-			trace("Uploaded via Ktx.createCubeTexture: " + cube);
+			var cube = Ktx.createCubeTextureFromData(context, ktx);
+			trace("Uploaded via Ktx.createCubeTextureFromData: " + cube);
 			return;
 		}
 
-		// Façade API: create and upload in one call.
+		// Façade API: create and upload in one call from raw bytes.
 		var texture = Ktx.createTexture(context, bytes);
 		trace("Uploaded via Ktx.createTexture: " + texture);
+
+		// The KtxData overload reuses the parsed metadata, avoiding a second
+		// header parse.
+		var fromData = Ktx.createTextureFromData(context, ktx);
+		trace("Uploaded via Ktx.createTextureFromData: " + fromData);
 
 		// Static extension equivalent, into an existing texture.
 		var manual = context.createTexture(ktx.width, ktx.height, ktx.format, false);
 		manual.uploadKtxFromByteArray(bytes);
 		trace("Uploaded via uploadKtxFromByteArray extension");
 
-		// Raw reader iteration, mirroring the ATF upload callback shape.
-		var reader = new Ktx1Reader(bytes);
-		reader.readTextures(function(face, level, gpuFormat, width, height, length, data)
-			{
-				if (gpuFormat == KtxGPUFormat.DXT && level == 0 && face == 0)
-				{
-					trace("Base level DXT block: " + length + " bytes");
-				}
-			});
+		trace("GL internal format: 0x" + StringTools.hex(ktx.glInternalFormat, 8)
+			+ ", GPU bucket: " + gpuFormatName(ktx.gpuFormat));
+	}
 
-		// Resolve the GL upload constant that the library would use.
-		trace("GL format: 0x" + StringTools.hex(KtxCompressedFormats.resolve(context, ktx.glInternalFormat), 8));
+	private static function gpuFormatName(gpuFormat:KtxGPUFormat):String
+	{
+		return switch (gpuFormat)
+			{
+				case KtxGPUFormat.DXT: "DXT";
+				case KtxGPUFormat.PVRTC: "PVRTC";
+				case KtxGPUFormat.ETC1: "ETC1";
+				case KtxGPUFormat.ETC2: "ETC2";
+				case KtxGPUFormat.ASTC: "ASTC";
+				default: "Unknown";
+			};
 	}
 }

@@ -1,29 +1,27 @@
-package ktx.openfl;
+package ktx.openfl._internal;
 
 import haxe.io.Bytes;
+import ktx.openfl.KtxGPUFormat;
 import openfl.errors.ArgumentError;
 import openfl.errors.IllegalOperationError;
-import ktx.openfl._internal.KtxGL;
-import ktx.openfl._internal.KtxImage;
 import openfl.utils.ByteArray;
 
 /**
 	Parses KTXv1 (Khronos Texture) files containing block-compressed 2D or
 	cubemap textures.
 
+	This parser is an implementation detail of the `ktx.openfl` public API.
+	Applications read textures through `Ktx` and `KtxData`, not this class.
+
 	The constructor classifies the file from its 12-byte identifier before any
 	parsing happens: KTXv2 data is recognised and rejected with an
 	`IllegalOperationError`, and data that is not KTX fails with an
 	`ArgumentError`. KTXv2 bytes are never interpreted as KTXv1.
 
-	To read a texture:
-	- create a `new Ktx1Reader()` instance from a ByteArray containing KTXv1 data
-	- inspect the header fields (width, height, gpuFormat, and so on)
-	- call `readTextures()` and provide an upload callback for each level and face
-
 	The KTXv1 specification can be found here:
 	<https://registry.khronos.org/KTX/specs/1.0/ktxspec.v1.html>
 **/
+@:dox(hide)
 class Ktx1Reader
 {
 	/**
@@ -85,7 +83,7 @@ class Ktx1Reader
 	/**
 		The parsed images, in level-then-face order.
 
-		Advanced inspection only; use `readTextures()` to iterate over the images.
+		Internal inspection only; `readTextures()` iterates over the images.
 	**/
 	@:noCompletion @:dox(hide) public var images(default, null):Array<KtxImage>;
 
@@ -247,7 +245,7 @@ class Ktx1Reader
 			@param dataLen   The length, in bytes, of the pixel data buffer.
 			@param bytes     The pixel data for this mip level and face.
 	**/
-	public function readTextures(uploadCallback:UInt->Int->KtxGPUFormat->Int->Int->Int->Bytes->Void):Void
+	@:noCompletion public function readTextures(uploadCallback:UInt->Int->KtxGPUFormat->Int->Int->Int->Bytes->Void):Void
 	{
 		for (image in images)
 		{
@@ -256,40 +254,20 @@ class Ktx1Reader
 	}
 
 	/**
-		Checks whether the provided ByteArray, at the specified offset, matches the
-		KTXv1 file signature.
-
-		@param data   The ByteArray to inspect.
-		@param offset The position in the ByteArray to compare against the KTXv1 signature.
-		@return       True if the signature matches what is expected for KTXv1, otherwise false.
+		Signature probes used by the `Ktx` façade; the public detection
+		contract lives there, so these stay internal.
 	**/
-	public static function isKtx1(data:ByteArray, offset:UInt = 0):Bool
+	private static function isKtx1(data:ByteArray, offset:UInt = 0):Bool
 	{
 		return matchesSignature(data, offset, KtxGL.KTX1_SIGNATURE);
 	}
 
-	/**
-		Checks whether the provided ByteArray, at the specified offset, matches the
-		KTXv2 file signature.
-
-		@param data   The ByteArray to inspect.
-		@param offset The position in the ByteArray to compare against the KTXv2 signature.
-		@return       True if the signature matches what is expected for KTXv2, otherwise false.
-	**/
-	public static function isKtx2(data:ByteArray, offset:UInt = 0):Bool
+	private static function isKtx2(data:ByteArray, offset:UInt = 0):Bool
 	{
 		return matchesSignature(data, offset, KtxGL.KTX2_SIGNATURE);
 	}
 
-	/**
-		Checks whether the provided ByteArray, at the specified offset, matches any
-		supported KTX file signature (KTXv1 or KTXv2).
-
-		@param data   The ByteArray to inspect.
-		@param offset The position in the ByteArray to test.
-		@return       True if the signature matches KTXv1 or KTXv2, otherwise false.
-	**/
-	public static function isKtx(data:ByteArray, offset:UInt = 0):Bool
+	private static function isKtx(data:ByteArray, offset:UInt = 0):Bool
 	{
 		return isKtx1(data, offset) || isKtx2(data, offset);
 	}
@@ -316,15 +294,7 @@ class Ktx1Reader
 		return true;
 	}
 
-	/**
-		Maps a KTXv1 OpenGL internal format value to the corresponding GPU format
-		bucket, or null when the format is not supported.
-
-		@param glInternalFormat The OpenGL internal format constant, for example
-		0x83F0 for DXT1.
-		@return                 The matching GPU format, or null.
-	**/
-	public static function gpuFormatFromGL(glInternalFormat:Int):Null<KtxGPUFormat>
+	private static function gpuFormatFromGL(glInternalFormat:Int):Null<KtxGPUFormat>
 	{
 		var info = KtxFormat.describe(glInternalFormat);
 		return (info != null) ? info.gpuFormat : null;

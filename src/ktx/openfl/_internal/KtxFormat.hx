@@ -1,6 +1,6 @@
-package ktx.openfl;
+package ktx.openfl._internal;
 
-import ktx.openfl._internal.KtxGL;
+import ktx.openfl.KtxGPUFormat;
 
 /**
 	Describes a single KTX texture format.
@@ -10,7 +10,7 @@ import ktx.openfl._internal.KtxGL;
 	Format (ATF), so KTX textures can be routed through compressed-texture
 	upload paths that mirror OpenFL's ATF handling.
 **/
-@:structInit
+@:structInit @:dox(hide)
 class KtxFormatInfo
 {
 	/**
@@ -31,7 +31,11 @@ class KtxFormatInfo
 
 /**
 	Format mapping for KTX internal formats.
+
+	Used by the internal reader and upload pipeline; applications consume
+	format details through `KtxData` and `Ktx`.
 **/
+@:dox(hide)
 class KtxFormat
 {
 	/**

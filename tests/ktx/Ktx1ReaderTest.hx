@@ -3,14 +3,18 @@ package ktx;
 import haxe.io.Bytes;
 import openfl.errors.ArgumentError;
 import openfl.errors.IllegalOperationError;
+import ktx.openfl._internal.Ktx1Reader;
 import ktx.openfl.KtxGPUFormat;
-import ktx.openfl.Ktx1Reader;
 import openfl.utils.ByteArray;
 import utest.Assert;
 
 /**
-	Tests for the KTXv1 parser.
+	Tests for the internal KTXv1 parser.
+
+	The parser is a library implementation detail; unit tests reach its
+	private signature probes through `@:access`.
 **/
+@:access(ktx.openfl._internal.Ktx1Reader)
 class Ktx1ReaderTest implements utest.ITest
 {
 	public function new() {}

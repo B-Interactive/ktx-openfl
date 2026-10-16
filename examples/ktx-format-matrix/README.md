@@ -35,19 +35,19 @@ All eight assets are listed in one declarative table (`kMatrix`). There is no
 filesystem scan.
 
 * **PNG** — `Assets.getBitmapData()` then stock `Texture.fromBitmapData()`.
-* **KTX** — `Assets.getBytes()` → `KtxData` →
-  `Ktx.isFormatSupported(Starling.current.context, ktx.glInternalFormat)`
-  **before** upload. Supported files go through
+* **KTX** — `Assets.getBytes()` → `Ktx.readData(bytes)` →
+  `Ktx.supports(Starling.current.context, ktx)` **before** upload.
+  Supported files go through
   `KtxTextures.fromKtxData(bytes, 1, true, null, false)` with PMA stated
-  explicitly as `false` (KTX does not record premultiplied alpha; these
+  explicitly as `false` (KTX does not record premultiplied alpha on v1; these
   assets store straight alpha). Unsupported files are not uploaded; the
   reason uses the header `formatName`, e.g.
   `unsupported on this GPU (ASTC 4x4)`.
 
 Loading is deliberate and direct rather than through Starling's
 `AssetManager`, so each texture stays paired with its own atlas XML. The
-`KtxAssets.register()` factory path is shown in the sibling `ktx-starling`
-example.
+`KtxAssets.register()` factory path (`.ktx` / `.ktx2`; v2 still rejected at
+load) is shown in the sibling `ktx-starling` example.
 
 Atlas XML frame names embed the texture file base name, so each cell asks its
 `TextureAtlas` for `getTextures(prefix)` with that prefix. The KTX
@@ -87,9 +87,10 @@ plain ASCII hyphens so every glyph stays inside that set.
 Learner notes
 -------------
 
-* Probe with `Ktx.isFormatSupported` before upload so unsupported compressed
-  formats (ASTC included) become a clean list entry instead of a failed
-  texture.
+* Probe with `Ktx.supports(context, ktxData)` before upload so unsupported
+  compressed formats (ASTC included) become a clean list entry instead of a
+  failed texture. Prefer this over the advanced `Ktx.isFormatSupported` GL
+  probe when you already hold `KtxData`.
 * Pass `premultipliedAlpha` explicitly; never infer it from `hasAlpha`.
 * Prefer the direct `fromKtxData` path when each atlas must stay tied to a
   known XML pair; use `KtxAssets` when you want `AssetManager` to own loading.

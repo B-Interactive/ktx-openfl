@@ -10,8 +10,6 @@ import openfl.display3D.textures.Texture;
 import openfl.errors.ArgumentError;
 import openfl.errors.IllegalOperationError;
 import openfl.events.Event;
-import ktx.openfl.Ktx1Reader;
-import ktx.openfl.KtxCompressedFormats;
 import openfl.utils._internal.UInt8Array;
 
 /**
@@ -254,7 +252,6 @@ import openfl.display3D.Context3D;
 import openfl.display3D.textures.CubeTexture;
 import openfl.display3D.textures.Texture;
 import openfl.errors.IllegalOperationError;
-import ktx.openfl.Ktx1Reader;
 
 /**
 	Flash and AIR targets cannot upload Khronos Texture (KTX) data, because the

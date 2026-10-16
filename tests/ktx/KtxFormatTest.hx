@@ -1,6 +1,6 @@
 package ktx;
 
-import ktx.openfl.KtxFormat;
+import ktx.openfl._internal.KtxFormat;
 import ktx.openfl.KtxGPUFormat;
 import utest.Assert;
 
