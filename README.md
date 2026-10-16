@@ -77,17 +77,17 @@ import ktx.openfl.starling.KtxTextures;
 
 Upload is GPU-only (`compressedTexImage2D`). There is no CPU transcoder.
 
-### Not supported / out of scope
+### Not supported / planned
 
 | Item | Status |
 | --- | --- |
 | KTXv2 load | Detected, rejected cleanly |
 | Basis Universal / UASTC | Planned with KTXv2 |
-| BPTC / BC7, RGTC | Out of scope |
-| PVRTC2, S3TC sRGB variants | Out of scope |
+| BPTC / BC7, RGTC | Planned |
+| PVRTC2, S3TC sRGB variants | Planned |
 | ATC, FXT1, LATC and other legacy codecs | Out of scope |
 | ASTC 3D / array / 1D | Out of scope |
-| Uncompressed KTX | Out of scope |
+| Uncompressed KTX | Planned |
 | Flash / AIR upload | Parse only (runtime accepts ATF only) |
 | Away3D bridge | Planned as optional (like Starling); not available yet |
 
